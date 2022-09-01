@@ -50,17 +50,36 @@ package leet
 
 //leetcode submit region begin(Prohibit modification and deletion)
 func calculate(s string) int {
-	stack1, stack2 := []byte{}, []byte{}
-
+	stack := []int{}
+	// sign  1 --> +
+	// sign -1 --> -
+	// 默认第一个字符默认携带 '+' , sign 指定为 1
+	res, num, sign := 0, 0, 1
 	for i := 0; i < len(s); i++ {
-		if s[i] == ' ' {
-			continue
-		} else if s[i] == '+' || s[i] == '-' || s[i] == '(' || s[i] == ')' {
-			stack2 = append(stack2, s[i])
-		} else {
-			stack1 = append(stack1, s[i])
+		switch s[i] {
+		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9': // 计算出字符串出数字值，包含多个字符: 7 17
+			num = num*10 + int(s[i]-'0')
+		case '+': // 将之前的总和，公式的左半部分 res 和 公式的右半部分num通过 符号 sign 累计起来
+			res += sign * num
+			num, sign = 0, 1
+		case '-':
+			res += sign * num
+			num, sign = 0, -1
+		case '(': // 将之前的总和作为公式左边部分res 以及符号 sign 推入栈, 从新初始化后进行计算
+			stack = append(stack, sign)
+			stack = append(stack, res)
+			res, num, sign = 0, 0, 1
+		case ')': // 将表达式总和 作为公式的右边部分 赋值给 num，从stack 取出 res 和 sign
+			num = res + sign*num
+			res = stack[len(stack)-1]
+			sign = stack[len(stack)-2]
+			stack = stack[:len(stack)-2]
 		}
 	}
+	if num != 0 { // 还会有负数的情况
+		res += sign * num
+	}
+	return res
 }
 
 //leetcode submit region end(Prohibit modification and deletion)
