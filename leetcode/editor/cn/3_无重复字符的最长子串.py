@@ -15,5 +15,5 @@ class Solution:
 
 # leetcode submit region end(Prohibit modification and deletion)
 
-if __name__ == '__main__':
+def test_lengthOfLongestSubstring():
     assert Solution().lengthOfLongestSubstring("abcabcbb") == 3
